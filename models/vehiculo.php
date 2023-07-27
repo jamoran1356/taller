@@ -28,6 +28,18 @@ class Vehiculo {
         return $Id;
     }
 
+    public function listado_paginado_vehiculos($inicio, $registros) {
+        $sql = "SELECT p.idpropietario, p.nombre, p.correo, v.placa, v.color, v.tipo, v.modelo, v.marca, v.fecha_ingreso 
+                FROM propietarios p 
+                INNER JOIN vehiculo v ON p.idpropietario = v.idpropietario
+                LIMIT $inicio, $registros";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->execute();
+        $data = $stmt->fetchAll();
+        return $data;
+    }
+    
+
     public function agregar_vehiculo($nombre, $identificacion, $telefono, $correo, $marca, $tipo, $modelo, $color, $placa, $motivo){
         $pro = self::existe_propietario($identificacion);
         $veh = self::existe_vehiculo($placa);
@@ -47,6 +59,14 @@ class Vehiculo {
         $sql = "SELECT COUNT(*) as total FROM propietarios WHERE identificacion = ?";
         $stmt = $this->conexion->prepare($sql);
         $stmt -> execute([$identificacion]);
+        $data = $stmt -> fetchColumn();
+        return $data;
+    }
+
+    public function cuenta_vehiculos(){
+        $sql = "SELECT COUNT(*) as total FROM vehiculo";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt -> execute();
         $data = $stmt -> fetchColumn();
         return $data;
     }

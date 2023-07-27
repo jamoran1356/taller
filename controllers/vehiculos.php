@@ -103,6 +103,27 @@ if(empty($_REQUEST['op'])){
             //    echo json_encode($arrResp);
             //}
     }
+
+    if($option== "__listado"){
+        $tbl = new Vehiculo();
+        $tbl = $tbl->cuenta_vehiculos();
+
+        $pagina = isset($_POST['pg']) ? (int)$_POST['pg'] : 1;
+        $registros = isset($_POST['registros']) ? (int)$_POST['registros'] : 2;
+
+        $inicio = ($pagina>1) ? (($pagina*$registros)-$registros) : 0;
+        
+        $total_paginas = ceil($tbl/$registros); // Redondear hacia arriba
+        $lp = new Vehiculo();
+        $lp = $lp->listado_paginado_vehiculos($inicio, $registros);
+
+        if(!empty($lp)){
+            $arrResp=array("status"=>true,"msg"=>"OK", "data"=> $lp, "total_paginas"=> $total_paginas);
+            echo json_encode($arrResp);
+            die();
+        }
+
+    }
     
     if ($option == "__mostrarTarea") {
         if (isset($_POST)) {
